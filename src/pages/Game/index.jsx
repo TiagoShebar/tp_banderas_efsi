@@ -1,10 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 const Game = () => {
-    const [countries, setCountries] = useState([]);
+  const [countries, setCountries] = useState([]);
+  const [remainingCountries, setRemainingCountries] = useState([]);
+  const [passedCountries, setPassedCountries] = useState([]);
   const [selectedCountry, setSelectedCountry] = useState(null);
   const [userGuess, setUserGuess] = useState('');
   const [message, setMessage] = useState('');
+  const [score, setScore] = useState(0);
+  const [currentIndex, setCurrentIndex] = useState(0); // Estado para el índice del país actual
+  const timerRef = useRef(null); // Ref para manejar el temporizador
 
   useEffect(() => {
     // Función para recuperar los datos de la API
@@ -13,6 +18,7 @@ const Game = () => {
         const response = await fetch('https://countriesnow.space/api/v0.1/countries/flag/images');
         const data = await response.json();
         setCountries(data.data);
+        setRemainingCountries(data.data);
       } catch (error) {
         console.error('Error fetching countries:', error);
       }
@@ -23,35 +29,71 @@ const Game = () => {
   }, []);
 
   useEffect(() => {
-    // Función para seleccionar un país aleatorio
-    const pickRandomCountry = () => {
-      if (countries.length > 0) {
-        const randomIndex = Math.floor(Math.random() * countries.length);
-        setSelectedCountry(countries[randomIndex]);
+    // Función para seleccionar un país basado en el índice
+    const pickCountry = () => {
+      if (remainingCountries.length > 0) {
+        const randomIndex = Math.floor(Math.random() * remainingCountries.length);
+        const newCountry = remainingCountries[randomIndex];
+        setSelectedCountry(newCountry);
+        
+        // Actualizar las listas
+        setPassedCountries(prevPassedCountries => [...prevPassedCountries, newCountry]);
+        setRemainingCountries(prevRemainingCountries => 
+          prevRemainingCountries.filter(country => country !== newCountry)
+        );
       }
     };
 
-    // Llamar a la función para seleccionar el país cuando los países estén disponibles
-    pickRandomCountry();
-  }, [countries]);
+    // Función para cambiar el país después de un tiempo
+    const changeCountryAfterDelay = () => {
+      timerRef.current = setTimeout(() => {
+        pickCountry();
+      }, 2000); // Espera 2 segundos
+    };
 
-  // Función para manejar el cambio en el campo de entrada
+    // Iniciar el cambio de país si hay países disponibles
+    if (remainingCountries.length > 0) {
+      pickCountry();
+      changeCountryAfterDelay();
+    }
+
+    // Limpiar el temporizador si el componente se desmonta
+    return () => clearTimeout(timerRef.current);
+  }, [remainingCountries]);
+
+  useEffect(() => {
+    // Verificar si todos los países han sido mostrados
+    if (passedCountries.length === countries.length) {
+      // Realizar una acción cuando todos los países hayan sido mostrados
+      setMessage('¡Todos los países han sido mostrados!');
+    }
+  }, [passedCountries, countries]);
+
   const handleInputChange = (e) => {
     setUserGuess(e.target.value);
   };
 
-  // Función para manejar la verificación de la respuesta
   const handleSubmit = (e) => {
     e.preventDefault();
     if (userGuess.toLowerCase() === selectedCountry.name.toLowerCase()) {
+      setScore(prevScore => prevScore + 10);
       setMessage('¡Correcto! Has adivinado el país.');
     } else {
+      setScore(prevScore => prevScore - 1);
       setMessage(`Incorrecto. La respuesta correcta es ${selectedCountry.name}.`);
     }
-    // Limpiar el campo de entrada después de enviar
     setUserGuess('');
-    // Seleccionar un nuevo país
-    pickRandomCountry();
+
+    // Cambiar al siguiente país cuando el formulario es enviado
+    const nextIndex = (currentIndex + 1) % remainingCountries.length;
+    setCurrentIndex(nextIndex);
+    if (remainingCountries.length > 0) {
+      pickCountry(); // Seleccionar un nuevo país
+    }
+
+    // Reiniciar el temporizador
+    clearTimeout(timerRef.current);
+    changeCountryAfterDelay();
   };
 
   return (
@@ -73,7 +115,7 @@ const Game = () => {
           {message && <p>{message}</p>}
         </div>
       ) : (
-        <p>Cargando datos...</p>
+        <p>Cargando datos o no hay más países para mostrar...</p>
       )}
     </div>
   );
