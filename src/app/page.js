@@ -1,13 +1,18 @@
-import Image from "next/image";
-import styles from "./page.module.css";
-import Game from "@/pages/Game";
-import { useState } from "react";
+"use client";
+
+import React from 'react';
+import Game from "../pages/Game"; // Asegúrate de que la ruta sea correcta
+import { useScores } from "../context/ScoresContext";
 
 export default function Home() {
-  const [scores, setScores] = useState(0);
+  const { scoresGlobal, setScoresGlobal } = useScores();
+
   return (
-    <main className={styles.main}>
-      <Game setScores={setScores}/>
+    <main>
+      <Game setScoresGlobal={setScoresGlobal} />
     </main>
   );
 }
+
+
+

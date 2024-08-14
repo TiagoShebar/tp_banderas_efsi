@@ -1,2 +1,2 @@
-import HighScores from "../../pages/highScores";
+import HighScores from "../../pages/HighScoresView";
 export default HighScores;
