@@ -1,12 +1,10 @@
 "use client";
-
+import "./styleGame.css";
 import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { useScores } from '../../context/ScoresContext';
 
 const Game = ({ existingUserNames }) => {
     const router = useRouter();
-    const { scoresGlobal, setScoresGlobal } = useScores();
 
     const [userName, setUserName] = useState('');
     const [gameScore, setGameScore] = useState(0);
@@ -17,7 +15,7 @@ const Game = ({ existingUserNames }) => {
     const [message, setMessage] = useState('');
     const [timeRemaining, setTimeRemaining] = useState(10);
     const [isNameTaken, setIsNameTaken] = useState(false);
-    const [gameStarted, setGameStarted] = useState(false); // State to track if the game has started
+    const [gameStarted, setGameStarted] = useState(false);
     const timerRef = useRef(null);
 
     useEffect(() => {
@@ -33,7 +31,7 @@ const Game = ({ existingUserNames }) => {
 
         fetchCountries();
     }, []);
-
+    
     useEffect(() => {
         if (countries.length && gameStarted) {
             nextFlag();
@@ -75,7 +73,7 @@ const Game = ({ existingUserNames }) => {
             setIsNameTaken(true);
         } else {
             setIsNameTaken(false);
-            setGameStarted(true); // Start the game
+            setGameStarted(true);
         }
     };
 
@@ -92,6 +90,7 @@ const Game = ({ existingUserNames }) => {
     };
 
     const nextFlag = () => {
+        console.log(countriesIndexPassed);
         let randomNum;
         do {
             randomNum = Math.floor(Math.random() * countries.length);
@@ -100,17 +99,19 @@ const Game = ({ existingUserNames }) => {
         setSelectedCountry(countries[randomNum]);
         setUserGuess('');
         setMessage('');
-        setTimeRemaining(15); // Reset the timer for the next flag
+        setTimeRemaining(15);
     };
 
     const handleEndGame = () => {
         if (userName) {
-            const updatedScores = { ...scoresGlobal, [userName]: gameScore };
-            setScoresGlobal(updatedScores);
-            localStorage.setItem('tp-banderas', JSON.stringify(updatedScores));
+            let ownScore = { [userName]: gameScore };
+            const scoresString = localStorage.getItem('tp-banderas');
+            const scores = scoresString ? JSON.parse(scoresString) : {};
+            Object.assign(scores, ownScore);
+            localStorage.setItem('tp-banderas', JSON.stringify(scores));
 
-            // Redirect to high scores page
-            router.push('/highscores');
+            
+            router.push('/HighScores');
         }
     };
 
@@ -146,7 +147,7 @@ const Game = ({ existingUserNames }) => {
                                     type="text"
                                     value={userGuess}
                                     onChange={handleInputChange}
-                                    placeholder="Escribe el nombre del país"
+                                    placeholder="Escribe el nombre del país"    
                                 />
                                 <button type="submit">Comprobar</button>
                             </form>

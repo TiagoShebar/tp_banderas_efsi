@@ -1,0 +1,54 @@
+div {
+    font-family: 'Press Start 2P', cursive;
+    background: #222;
+    color: #fff;
+    text-align: center;
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 600px; 
+    margin: auto;
+}
+
+h1 {
+    font-size: 2em;
+    margin-bottom: 20px;
+    color: #ffcc00;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* Tabla */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0 auto;
+}
+
+thead {
+    background: #ff0099;
+    color: #fff;
+}
+
+th {
+    padding: 10px;
+    font-size: 1.2em;
+    border: 2px solid #ffcc00;
+}
+
+td {
+    padding: 10px;
+    border: 1px solid #444;
+    font-size: 1em;
+}
+
+tbody tr:nth-child(even) {
+    background: #333;
+}
+
+tbody tr:nth-child(odd) {
+    background: #444;
+}
+
+tbody tr:hover {
+    background: #555;
+    cursor: pointer;
+}

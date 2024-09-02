@@ -1,7 +1,5 @@
 import { Inter } from "next/font/google";
-import "./globals.css";
-import NavBar from "../components/NavBar";
-import { ScoresProvider } from "../context/ScoresContext"; // Importa el proveedor del contexto
+import NavBar from "../components/NavBar"; // Importa el proveedor del contexto
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -13,11 +11,9 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
-        <ScoresProvider> {/* Envuelve el contenido con el proveedor */}
+      <body>
           <header><NavBar/></header>
           {children}
-        </ScoresProvider>
       </body>
     </html>
   );

@@ -1,5 +1,5 @@
 "use client";
-
+import './styleHighScores.css';
 import React, { useState, useEffect } from 'react';
 
 const HighScores = () => {
@@ -25,7 +25,7 @@ const HighScores = () => {
             <table>
                 <thead>
                     <tr>
-                        <th>Nombre de Usuario</th>
+                        <th>Username</th>
                         <th>Puntaje</th>
                     </tr>
                 </thead>
