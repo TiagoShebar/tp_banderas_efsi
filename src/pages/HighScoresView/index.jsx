@@ -1,30 +1,47 @@
 "use client";
 
-import React, { useEffect, useRef } from 'react';
-import { useScores } from '../../context/ScoresContext';
+import React, { useState, useEffect } from 'react';
 
-const HighScoresView = () => {
-  const { scoresGlobal } = useScores();
-  const scoresRef = useRef(null);
+const HighScores = () => {
+    const [highScores, setHighScores] = useState([]);
 
-  // Ordenar la lista de puntuaciones de mayor a menor
-  const sortedScores = scoresGlobal.slice().sort((a, b) => b - a);
+    useEffect(() => {
+        const fetchHighScores = () => {
+            const scoresString = localStorage.getItem('tp-banderas');
+            const scores = scoresString ? JSON.parse(scoresString) : {};
 
-  useEffect(() => {
-    // Desplazar al inicio del componente cuando se actualiza la lista de puntuaciones
-    if (scoresRef.current) {
-      scoresRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  }, [scoresGlobal]);
+            // Convertir el objeto a un array de [nombre, puntaje] y ordenar por puntaje
+            const sortedScores = Object.entries(scores).sort((a, b) => b[1] - a[1]);
 
-  return (
-    <ul ref={scoresRef}>
-      {sortedScores.map((score, index) => (
-        <li key={index}>{score}</li>
-      ))}
-    </ul>
-  );
+            setHighScores(sortedScores);
+        };
+
+        fetchHighScores();
+    }, []);
+
+    return (
+        <div>
+            <h1>High Scores</h1>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nombre de Usuario</th>
+                        <th>Puntaje</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {highScores.map(([name, score]) => (
+                        <tr key={name}>
+                            <td>{name}</td>
+                            <td>{score}</td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+        </div>
+    );
 };
 
-export default HighScoresView;
+export default HighScores;
+
 
