@@ -80,7 +80,7 @@ const Game = ({ existingUserNames }) => {
     const checkAnswer = () => {
         if (userGuess.toLowerCase() === selectedCountry.name.toLowerCase()) {
             setMessage('¡Correcto!');
-            setGameScore((prevScore) => prevScore + 10);
+            setGameScore((prevScore) => prevScore + 10 + timeRemaining);
         } else {
             setMessage('¡Incorrecto!');
             setGameScore((prevScore) => prevScore - 1);
@@ -162,3 +162,11 @@ const Game = ({ existingUserNames }) => {
 };
 
 export default Game;
+
+/*Si el temporizador termina antes de que el usuario adivine, los segundos
+restantes suman puntos.??
+
+Por las dudas aclaro que lo entendí como que era al reves, es decir: si el usuario adivina antes de que el temporizador termine entonces los segundos restantes suman como puntos. 
+Porque de la otra forma no tendría logica porque no hay segundos restantes si el temporizador terminó.
+
+*/
